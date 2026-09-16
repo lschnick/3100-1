@@ -1,9 +1,11 @@
 // backend.js
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = 8000;
 
+app.use(cors());
 app.use(express.json());
 
 const findUserByName = (name) => {
@@ -12,26 +14,19 @@ const findUserByName = (name) => {
 
 app.get("/users", (req, res) => {
   const name = req.query.name;
-	const job = req.query.job;
+  const job = req.query.job;
   if (name != undefined) {
-	  if (job != undefined)
-	  {
-		  let result = findUserByNameAndJob(name, job);
-                result = { users_list: result };
-		  res.send(result);
-	  }
-	  else
-	  {
+    if (job != undefined) {
+      let result = findUserByNameAndJob(name, job);
+      result = { users_list: result };
+      res.send(result);
+    } else {
+      let result = findUserByName(name);
+      result = { users_list: result };
 
-	    let result = findUserByName(name);
-		   result = { users_list: result };
-
-    	res.send(result);
-	  }
-
-  } 
-
-	else {
+      res.send(result);
+    }
+  } else {
     res.send(users);
   }
 });
@@ -50,25 +45,23 @@ app.get("/users/:id", (req, res) => {
 });
 
 const findUserByNameAndJob = (name, job) =>
-	users["users_list"].filter((user)=> (user["name"] === name)).filter((user)=> (user["job"] === job));
-
-
+  users["users_list"]
+    .filter((user) => user["name"] === name)
+    .filter((user) => user["job"] === job);
 
 const deleteUserById = (user) => {
-	let x = 0;
-	for(let x = 0; x < users["users_list"].length; x++)
-	{
-		if (users["users_list"][x].id == user.id)
-		{
-			users["users_list"].splice(x, 1);
-			break;
-		}
-	}
+  let x = 0;
+  for (let x = 0; x < users["users_list"].length; x++) {
+    if (users["users_list"][x].id == user.id) {
+      users["users_list"].splice(x, 1);
+      break;
+    }
+  }
 };
 app.delete("/users", (req, res) => {
-    const user = req.body;
-    deleteUserById(user);
-    res.send();
+  const user = req.body;
+  deleteUserById(user);
+  res.send();
 });
 
 const addUser = (user) => {
