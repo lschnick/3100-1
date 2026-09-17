@@ -61,18 +61,19 @@ const deleteUserById = (user) => {
 app.delete("/users", (req, res) => {
   const user = req.body;
   deleteUserById(user);
-  res.send();
+  res.status(204).send();
 });
 
 const addUser = (user) => {
+  user.id = (Math.random() * 100000).toFixed(0);
   users["users_list"].push(user);
   return user;
 };
 
 app.post("/users", (req, res) => {
   const userToAdd = req.body;
-  addUser(userToAdd);
-  res.send();
+  const newUser = addUser(userToAdd);
+  res.status(201).send(newUser);
 });
 
 app.listen(port, () => {

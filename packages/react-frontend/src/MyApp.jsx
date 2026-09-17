@@ -12,15 +12,48 @@ function MyApp() {
     return promise;
   }
 
-  function removeOneCharacter(index) {
+  function removeOneCharacter(person, index) {
+    const promise = fetch("Http://localhost:8000/users", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(person),
+    }).then((res) => {
+      if (res.status !== 204) {
+        throw Error("Not Successful");
+      }
+    });
+
     const updated = characters.filter((character, i) => {
       return i !== index;
     });
     setCharacters(updated);
   }
+
   function updateList(person) {
-    setCharacters([...characters, person]);
-    <Form handleSubmit={updateList} />;
+    postUser(person)
+      .then((newUser) => setCharacters([...characters, newUser]))
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function postUser(person) {
+    const promise = fetch("Http://localhost:8000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(person),
+    }).then((res) => {
+      if (res.status !== 201) {
+        throw Error("Not Successful");
+      }
+      return res.json();
+    });
+
+    return promise;
   }
 
   useEffect(() => {
