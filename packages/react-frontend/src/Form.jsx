@@ -5,7 +5,6 @@ function Form(props) {
   const [person, setPerson] = useState({
     name: "",
     job: "",
-    _id: "",
   });
   function handleChange(event) {
     const { name, value } = event.target;

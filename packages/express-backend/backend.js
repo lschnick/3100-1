@@ -14,10 +14,10 @@ dotenv.config();
 
 const { MONGO_CONNECTION_STRING } = process.env;
 
-mongoose.set("debug", true);
-mongoose
-  .connect(MONGO_CONNECTION_STRING + "users") // connect to Db "users"
-  .catch((error) => console.log(error));
+// mongoose.set("debug", true);
+// mongoose
+//   .connect(MONGO_CONNECTION_STRING + "users") // connect to Db "users"
+//   .catch((error) => console.log(error));
 const app = express();
 const port = 8000;
 
@@ -32,7 +32,7 @@ app.get("/users", (req, res) => {
   const name = req.query.name;
   const job = req.query.job;
   getUsers(name, job)
-    .then((result) => res.send(result))
+    .then((result) => res.send({ users_list: result }))
     .catch((err) => res.status(404).send(`Failed to find: ${err}`));
   // } else {
   //   findUserByName(name)
@@ -47,7 +47,7 @@ app.get("/users", (req, res) => {
 app.get("/users/:id", (req, res) => {
   const id = req.params["id"]; //or req.params.id
   findUserById(id)
-    .then((result) => res.send(result))
+    .then((result) => res.send({ users_list: result }))
     .catch((err) => res.status(404).send(`Failed to find: ${err}`));
 });
 
@@ -66,9 +66,10 @@ app.get("/users/:id", (req, res) => {
 //   }
 // };
 app.delete("/users", (req, res) => {
-  const user = req.body;
-  removeUser(user.id)
-    .then(res.status(204).send())
+  const { _id } = req.body;
+
+  removeUser(_id)
+    .then(() => res.status(204).send())
     .catch((err) => res.status(404).send(`Failed to delete: ${err}`));
 });
 
